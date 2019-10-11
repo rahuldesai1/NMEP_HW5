@@ -15,25 +15,19 @@ class Data(object):
         self.batch_size = batch_size
 
     def get_rot_data_iterator(self, images, labels, batch_size):
-        images = tf.cast(images, dtype=tf.float32)
-        dataset = tf.data.Dataset.from_tensor_slices((images, labels))
-        dataset = dataset.shuffle(buffer_size=10000, reshuffle_each_iteration=True)
-        dataset = dataset.batch(batch_size)
-        dataset = dataset.repeat()
-        dataset = dataset.prefetch(self.batch_size)
-        iterator = dataset.make_initializable_iterator()
-        return iterator
+        #TODO: Initialize your iterator with these images and labels
+        #You should be prefetching, shuffling, and batching your data. See the tf.data documentation is you are confused on this part.
+        ...
+        return
 
     def get_training_data(self):
         print("[INFO] Getting Training Data")
-        images = []
-        for i in range(1, 6):
-            data = self._get_next_batch_from_file(i)
-            images.extend(list(self.convert_images(data[b"data"])))
-        images, labels = self.preprocess(images)
-        return images, labels
+        #TODO: This function should return the training images and labels. You can use the helper functions for this.
+        ...
+        return
 
     def convert_images(self, raw_images):
+        #This function normalizes the input images and converts them to the appropriate shape: batch_size x height x width x channels
         images = raw_images / 255.0
         images = raw_images.reshape([-1, 3, self.height, self.width])
         images = images.transpose([0, 2, 3, 1])
@@ -57,36 +51,28 @@ class Data(object):
          return images, labels
 
     def preprocess(self, images):
-        print("[INFO] Generating Training Labels")
-        rot_labels = []
-        rot_images = []
-        rotations = [90, 180, 270]
-        for image in images:
-            rot_labels.append(0)
-            rot_images.append(image)
-            for i, angle in enumerate(rotations, 1):
-                rotated = imutils.rotate_bound(image, angle)
-                rot_images.append(rotated)
-                rot_labels.append(i)
-
-        return np.array(rot_images), tf.keras.utils.to_categorical(np.array(rot_labels))
-
-    def load_image(self, image_path):
+        #TODO: Rotate your images and save the labels for each rotation. Search google to figure out how to rotate
+        #The output should be a tuple of your images and labels
+        ...
         return
 
     @staticmethod
     def print_image_to_screen(data):
         """
-        Used for debugging purposes.
+        Used for debugging purposes. You can use this to see if your image was actually rotated.
         """
         img = Image.fromarray(data, 'RGB')
         img.show()
 
     @staticmethod
     def get_image(image_path):
+        #TODO: Load a single image for inference given the path to the data
+        #This is not required but can be used in your predict method in rotnet.py
+        ...
         return
 
 if __name__ == "__main__":
+    #You can use this for testing
     DATA_DIR = "./data/cifar-10-batches-py/"
     data_obj = Data(DATA_DIR, 32, 32, 5000)
     x, y = data_obj.get_training_data()
